@@ -1,10 +1,10 @@
 <?php
 
-use App\Exceptions\ValidationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Illuminate\Support\Facades\Log;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -14,8 +14,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
     })
     ->withExceptions(function (Exceptions $exceptions) {
-
-    })->create();
+        $exceptions->reportable(function (BadRequestHttpException $exception) {
+        });
+        $exceptions->render(function (BadRequestHttpException $exception) {
+            Log::channel('single')->error($exception->getMessage());
+            return response()->json([
+                'message' => $exception->getMessage(),
+            ], 400);
+        });
+    })
+    ->create();
