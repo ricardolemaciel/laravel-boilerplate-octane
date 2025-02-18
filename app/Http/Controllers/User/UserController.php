@@ -8,14 +8,21 @@ use App\Http\Requests\User\CreateUserRequest;
 use App\Services\User\CreateUser;
 use Illuminate\Http\Request;
 
+
 class UserController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *     path="/api/user",
+     *     summary="Teste",
+     *     tags={"user"},
+     *     @OA\Response(response=200, description="Sucesso"),
+     *     @OA\Response(response=401, description="Não autorizado")
+     * )
      */
     public function index()
     {
-        //
+        return "Hello World";
     }
 
     /**
@@ -32,8 +39,10 @@ class UserController extends Controller
     public function store(CreateUserRequest $request, CreateUser $createUser)
     {
         $createUser->execute(
-            new CreateUserDto((object) $request->all()
-        ));
+            new CreateUserDto(
+                (object) $request->all()
+            )
+        );
     }
 
     /**
