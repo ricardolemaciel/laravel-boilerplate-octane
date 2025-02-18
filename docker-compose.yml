@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  web:
+    command: php artisan octane:start --server=swoole --host=0.0.0.0 --port=80
+    container_name: web
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    restart: unless-stopped
+    tty: true
+    volumes:
+      - ./:/var/www
+      - ./docker/php/extra-php.ini:/usr/local/etc/php/conf.d/extra-php.ini
+      - ./docker/php/extra-php-fpm.conf:/etc/php8/php-fpm.d/www.conf
+    ports:
+      - "8089:80" #http
+      # - "443:443" #https
